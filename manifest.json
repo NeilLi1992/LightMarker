@@ -1,0 +1,54 @@
+{
+  "manifest_version": 2,
+
+  "name": "ScrollPin",
+  "version": "0.1",
+  "description": "Save the position of your scrollbar",
+  "browser_action": {
+    "default_icon": "icon.png" ,
+    "default_title": "ScrollPin",
+    "default_popup": "popup.html"
+  },
+
+  "background": {
+    "scripts": ["jquery.min.js", "model.js", "background.js"],
+    "persistent": false
+  },
+
+   "commands": {
+    "get-pos": {
+      "suggested_key": {
+        "default": "Ctrl+B",
+        "mac": "Command+B"
+      },
+      "description": "Just a test command"
+    },
+    "save-pos": {
+      "suggested_key": {
+        "default": "Ctrl+V",
+        "mac": "Command+V"
+      },
+      "description": "Test storage function"
+    },
+    "debug": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+V"
+      },
+      "description": "This is command remains for debugging"
+    }
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["http://*/"],
+      "js": ["jquery.min.js"]
+    }
+  ],
+
+  "permissions": [
+    "http://*/",
+    "activeTab",
+    "tabs",
+    "storage"
+  ]
+}
