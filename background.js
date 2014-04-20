@@ -17,6 +17,7 @@ function save(entry) {
   chrome.storage.local.set(to_save, function(){
     // 注意，此回调函数暂时还不能判断是否成功执行，需要配合runtime.lastError使用
     updateModel();
+    alert("书签已保存！");
   });
 }
 
@@ -86,7 +87,7 @@ chrome.commands.onCommand.addListener(function(command) {
           chrome.tabs.getSelected(null, function(tab){
             //内存语句的回调函数，确保两条异步语句都已执行完毕
             var entry = {
-              "id": model.size + 1,
+              "id": $.now(),
               "time_stamp": $.now(),
               "url": tab.url,
               "page_title": page_title,

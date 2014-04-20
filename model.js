@@ -3,10 +3,6 @@ console.log("model.js time " + $.now());
 // 全局变量保存所有条目
 window.entries = Object();
 
-var model = {
-  "size": 0
-}
-
 ///////////////////////////////////
 //数据
 ///////////////////////////////////
@@ -14,6 +10,5 @@ var model = {
 function updateModel() {
   chrome.storage.local.get(null, function(items) {
     entries = items;
-    model.size = Object.keys(entries).length;
   });
 }
