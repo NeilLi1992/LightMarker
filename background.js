@@ -21,6 +21,25 @@ function save(entry) {
   });
 }
 
+function remove(id, container) {
+  chrome.storage.local.remove("" + id, function(){
+    console.log("Here! Execution finished!");
+    updateModel(function(){
+      console.log("Size=" + getSize());
+      // 通知popup，没有任何条目了
+      if(getSize() == 0 ) {
+        console.log("Going to send notification!");
+        var message = {
+          'message_type': 'list-emptied',
+          'container': container
+        };
+        console.log(message);
+        chrome.runtime.sendMessage(message);
+      }
+    });
+  });
+}
+
 function load() {
 
 }
@@ -50,7 +69,7 @@ chrome.runtime.onMessage.addListener(function(message){
   if(message.message_type === "inject_result") {
     window.message.inject_result = message;
   } else {
-    console.log("Can't indentify message's type!");
+    console.log("Background can't indentify message's type!");
   }
 });
 

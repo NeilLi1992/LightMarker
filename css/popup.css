@@ -13,31 +13,18 @@ body {
   overflow: hidden;
 }
 
-.menu-item {
-  font-size: 1.5em;
-  padding: 5px 5px 5px 10px;
-  /*将height与line-height设置为一样，实现垂直居中*/
-  height: 2em;
-  line-height: 2em;
-  /*禁止折行显示*/
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  /*禁止选择文字*/
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  -khtml-user-select: none;
-
-  border-bottom: 1px solid gray;
-}
-
-.menu-item:last-child {
-  border-bottom: none;
-}
 
 /*列表相关*/
+#tool-bar {
+  background-color: gray;
+  color: lightblue;
+  font-weight: bold;
+  text-align: center;
+  font-family: 微软雅黑;
+  font-size: 1.3em;
+  cursor: default;
+}
+
 ul.list-group {
   margin-bottom: 0px;
 }
@@ -56,7 +43,7 @@ ul.list-group {
 /*控制条目名称的显示样式*/
 span.page-title {
   display: inline-block;
-  width: 290px; /*在点开按钮后该宽度会由JS改变*/
+  width: 280px; /*只显示level-0按钮时的文本宽度*/
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -66,15 +53,25 @@ i.icon {
   font-size: 16px;
 }
 
-/*强制控制最右边一个icon右侧不留白*/
-.details {
-  margin-right: 0px !important;
-}
-
 span.confirm {
   background-color: red;
 }
 
-span.cancel {
+/*span.cancel {
   background-color: green;
+}
+*/
+
+/*空白列表提示消息的样式*/
+.prompt .prompt-text {
+  font-weight: bolder;
+  font-family: 微软雅黑;
+  width: 277px;
+  display: inline-block;
+  line-height: 1.8em;
+}
+
+.prompt .badge {
+  position: relative;
+  top: 5px;
 }
