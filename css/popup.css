@@ -1,0 +1,51 @@
+html {
+  background: lightblue;
+  font-size: 10px;
+}
+
+body {
+  margin: 0px;
+  font-family: "ff-tisa-web-pro-1","ff-tisa-web-pro-2","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","WenQuanYi Micro Hei",sans-serif;
+}
+
+.menu {
+  width: 350px;
+  overflow: hidden;
+
+}
+
+.menu-item {
+  font-size: 1.5em;
+  padding: 5px 5px 5px 10px;
+  /*将height与line-height设置为一样，实现垂直居中*/
+  height: 2em;
+  line-height: 2em;
+  /*禁止折行显示*/
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /*禁止选择文字*/
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -khtml-user-select: none;
+
+  border-bottom: 1px solid gray;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+/*鼠标悬停的选择效果*/
+.hover-effect {
+  background-origin: border-box;
+  background: lightgreen;
+  cursor: pointer;
+}
+
+.icon {
+  position: relative;
+  top: 25%;
+}

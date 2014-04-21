@@ -1,13 +1,11 @@
-// 获取后台页面，通过background变量调用后天函数与变量
-var background = chrome.extension.getBackgroundPage();
 
 function wrapEntry(entry) {
   var DOM;
   // <div class="menu-item" id="id">Title of the page</div>
   DOM = "<div class='menu-item' id='" + entry.id + "'>" +
         entry.page_title +
+        "<i class='icon icon-chevron-right pull-right'></i>" +
         "</div>";
-
   return DOM;
 }
 
@@ -30,6 +28,14 @@ function generateEntriesView(container, entries) {
   }).mouseleave(function(){
     $(this).removeClass("hover-effect");
   });
+
+
 }
 
-generateEntriesView(".menu", background.entries);
+// 使用runtime.getBackgroundPage来唤醒事件后台页面
+chrome.runtime.getBackgroundPage(function(bg){
+  window.background = bg;
+  generateEntriesView(".menu", background.entries);
+});
+
+
