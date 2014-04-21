@@ -11,7 +11,6 @@ body {
 .menu {
   width: 350px;
   overflow: hidden;
-
 }
 
 .menu-item {
@@ -38,14 +37,44 @@ body {
   border-bottom: none;
 }
 
-/*鼠标悬停的选择效果*/
-.hover-effect {
-  background-origin: border-box;
-  background: lightgreen;
-  cursor: pointer;
+/*列表相关*/
+ul.list-group {
+  margin-bottom: 0px;
+}
+
+.list-group a {
+  /*控制单条条目的显示高度*/
+  padding-top: 8px;
+  padding-top: 8px;
 }
 
 .icon {
   position: relative;
   top: 25%;
+}
+
+/*控制条目名称的显示样式*/
+span.page-title {
+  display: inline-block;
+  width: 290px; /*在点开按钮后该宽度会由JS改变*/
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+i.icon {
+  font-size: 16px;
+}
+
+/*强制控制最右边一个icon右侧不留白*/
+.details {
+  margin-right: 0px !important;
+}
+
+span.confirm {
+  background-color: red;
+}
+
+span.cancel {
+  background-color: green;
 }
