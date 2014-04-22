@@ -70,6 +70,12 @@ function generateEntriesView(container, entries) {
   $("#bookmark").click(function(){
     background.savePage();
   });
+  // 点击齿轮按钮，打开设置页面，关闭popup
+  $("#settings").click(function(){
+    chrome.tabs.create({url:"settings.html"}, function(){
+      window.close();
+    });
+  });
 
   //若条目为0，则产生空白视图并退出函数
   if(background.getSize() == 0) {

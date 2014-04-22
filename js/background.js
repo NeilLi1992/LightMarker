@@ -6,6 +6,15 @@ window.message = {
   inject_result: undefined
 };
 
+// 注册消息事件监听器
+chrome.runtime.onMessage.addListener(function(message){
+  if(message.message_type === "inject_result") {
+    window.message.inject_result = message;
+  } else {
+    console.log("Background can't indentify message's type!");
+  }
+});
+
 function init() {
   //从存储空间读取model,存储到window.entries中
   updateModel();
@@ -150,19 +159,10 @@ function openEntry(entry) {
   });
 }
 
-// 注册消息事件监听器
-chrome.runtime.onMessage.addListener(function(message){
-  if(message.message_type === "inject_result") {
-    window.message.inject_result = message;
-  } else {
-    console.log("Background can't indentify message's type!");
-  }
-});
-
 chrome.commands.onCommand.addListener(function(command) {
   // 判断command
   switch(command) {
-    case "get-pos":
+    case "save-page":
       savePage();
       break;
 

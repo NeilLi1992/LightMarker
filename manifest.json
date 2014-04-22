@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
 
-  "name": "ScrollPin",
+  "name": "光线书签",
   "version": "0.1",
-  "description": "Save the position of your scrollbar",
+  "description": "智能的轻书签",
 
   "icons": { "16": "icon16.png",
              "48": "icon48.png",
@@ -11,7 +11,7 @@
 
   "browser_action": {
     "default_icon": "icon48.png" ,
-    "default_title": "ScrollPin",
+    "default_title": "光线书签",
     "default_popup": "popup.html"
   },
 
@@ -21,12 +21,12 @@
   },
 
    "commands": {
-    "get-pos": {
+    "save-page": {
       "suggested_key": {
         "default": "Ctrl+B",
         "mac": "Command+B"
       },
-      "description": "Just a test command"
+      "description": "Save page"
     },
     "save-pos": {
       "suggested_key": {
