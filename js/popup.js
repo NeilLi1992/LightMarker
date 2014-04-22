@@ -68,7 +68,7 @@ function generateEntriesView(container, entries) {
 
   // 添加level-0监听
   $(".level-0").click(function(){
-    $(this).siblings(".page-title").css("width", "218px");
+    $(this).siblings(".page-title").css("width", "210px");
     $(this).addClass("hide");
     $(this).siblings(".level-1").removeClass("hide");
 
@@ -119,11 +119,12 @@ function generateEmptyView(container) {
 
   var detailsNode =  $("<a href='#' class='list-group-item prompt'></a>")
                       .attr("id", "details")
-                      .append($("<div class='prompt-text'></div>").text("光线书签由李泳NeilLi1992开发。" +
-                        "其最重要的功能是可以保存页面的滑动条位置。后续功能正在开发中" +
-                        "联系我：yong.li1992@foxmail.com"))
+                      .append($("<div class='prompt-text'></div>")
+                        .append($("<p></p>").text("光线书签由李泳NeilLi1992开发。"))
+                        .append($("<p></p>").text("其最重要的功能是可以保存页面的滑动条位置。后续功能正在开发中。"))
+                        .append($("<p></p>").text("联系我：yong.li1992@foxmail.com"))
+                        )
                       .css("display", "none");
-
 
   $(container).append(emptyPromptNode);
 
@@ -136,6 +137,7 @@ function generateEmptyView(container) {
       $(this).unbind("click");
       // 需要时再载入节点
       $(container).append(detailsNode);
+      $(".prompt-text p").css("margin-bottom", "0px");
       $("#details").fadeIn(700);
     });
   });
