@@ -25,6 +25,29 @@ body {
   cursor: default;
 }
 
+#title {
+  position: relative;
+  left: 8px;
+}
+
+#tool-bar .badge {
+  background: none;
+  font-size: 1.5em;
+  position: relative;
+  top: -4px;
+  right: -6px;
+  cursor: pointer;
+  color: white;
+}
+
+#bookmark:hover {
+  color: Coral;
+}
+
+#settings:hover {
+  color: LightGrey;
+}
+
 ul.list-group {
   margin-bottom: 0px;
 }

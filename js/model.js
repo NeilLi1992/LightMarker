@@ -8,6 +8,8 @@ window.entries = Object();
 function updateModel(callback) {
   chrome.storage.local.get(null, function(items) {
     entries = items;
+
+    // 如果有回调函数的话执行回调函数
     if(typeof(callback) === "function") {
       callback();
     }

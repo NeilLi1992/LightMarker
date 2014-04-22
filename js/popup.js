@@ -1,6 +1,19 @@
+// 注册消息事件以捕捉消息
+chrome.runtime.onMessage.addListener(function(message){
+  console.log("Popup gets message!");
+  console.log(message);
+  if(message.message_type === "list-emptied") {
+    generateEmptyView(message.container);
+    $("#no-entry").hide().fadeIn(800);
+  } else if(message.message_type === "append-entry") {
+    appendEntry("ul.list-group", background.entries["" + message.entry_id]);
+  } else {
+    console.log("Popup can't indentify message's type!");
+  }
+});
 
 function wrapEntry(entry) {
-  var entryDOM = $("<a href='#' class='list-group-item'></a>");
+  var entryDOM = $("<a href='#' class='list-group-item entry'></a>");
   entryDOM.attr("id", entry.id);
   entryDOM.append($("<span class='page-title'></span>").text(entry.page_title));
 
@@ -29,10 +42,23 @@ function wrapEntry(entry) {
   //     "<i class='icon icon-remove'></i>"));
 
   return entryDOM;
-
 }
 
 function generateEntriesView(container, entries) {
+  ///////////////////////////////
+  // 为工具栏条目添加JS效果
+  ///////////////////////////////
+
+  // 点击书签按钮进行保存
+  $("#bookmark").click(function(){
+    background.savePage();
+  });
+
+  // $("#settings").click(function(){
+
+  // });
+
+
   //生成基本的列表
   if(background.getSize() == 0) {
     generateEmptyView(container);
@@ -58,7 +84,7 @@ function generateEntriesView(container, entries) {
 
   // 鼠标离开该条目时，若箭头已被隐藏，则恢复原样
   // 待添加span.page-title的宽度变化
-  $(".list-group-item").mouseleave(function(){
+  $(".entry").mouseleave(function(){
     $(this).children(".badge").addClass("hide");
     $(this).children(".level-0").removeClass("hide");
     $(this).children(".page-title").css("width", "");
@@ -78,7 +104,7 @@ function generateEntriesView(container, entries) {
       // 当点击了删除按钮以后在再为其增加监听
       $(this).siblings(".confirm").click(function(){
         // 执行删除该条目，若remove函数中检测到条目数为0的话，会sendMessage
-        background.remove($(this).parent().attr("id"), container);
+        background.storageRemove($(this).parent().attr("id"), container);
 
         $(this).css("background-color", "lightgreen");
         $(this).parent().fadeOut(700, function(){
@@ -92,19 +118,6 @@ function generateEntriesView(container, entries) {
   });
 }
 
-// 注册消息事件以捕捉消息
-chrome.runtime.onMessage.addListener(function(message){
-  console.log("Popup gets message!");
-  console.log(message);
-  if(message.message_type === "list-emptied") {
-    generateEmptyView(message.container);
-    $("#empty-prompt").hide().fadeIn(600);
-  } else {
-    console.log("Popup can't indentify message's type!");
-  }
-});
-
-
 function generateEmptyView(container) {
   var emptyPromptNode = $("<a href='#' class='list-group-item prompt'></a>")
                         .attr("id", "no-entry")
@@ -113,7 +126,7 @@ function generateEmptyView(container) {
 
   var howToNode = $("<a href='#' class='list-group-item prompt'></a>")
                       .attr("id", "how-to-save")
-                      .append($("<span class='prompt-text'></span>").text("使用快捷键Ctrl+B来保存书签。了解更多详情"))
+                      .append($("<span class='prompt-text'></span>").text("使用快捷键Ctrl+B来保存书签。更多详情"))
                       .append("<span class='badge'><i class='icon-arrow-down'></i></span>")
                       .css("display", "none");
 
@@ -141,6 +154,11 @@ function generateEmptyView(container) {
       $("#details").fadeIn(700);
     });
   });
+}
+
+function appendEntry(container, entry) {
+  console.log("Going to append Entry id=" + entry.id + " in container " + container);
+  $(container).append(wrapEntry(entry));
 }
 
 // 使用runtime.getBackgroundPage来唤醒事件后台页面
