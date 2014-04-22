@@ -23,7 +23,6 @@ function storageSave(entry, callback) {
 // "click" = 从popup窗口点击保存, 此时要进行新entry的添加
 // "shortcut" = 键盘快捷键保存，此时不进行entry的添加
 function savePage(source) {
-  console.log("get pos comamnd!");
   //注入jquery文件
   chrome.tabs.executeScript(null, { file: "jquery.min.js" }, function() {
     // 编写注入代码, 通过消息传送结果
@@ -61,12 +60,14 @@ function savePage(source) {
         };
 
         //保存条目
+        var remove_prompt = getSize() == 0 ? true : false; //如果之前size=0，现在新加了条目，并且popup是打开的，则要移除提示信息
         storageSave(entry, function(){
           // 如果popup窗口打开的话，发送消息通知popup添加新的条目
           if(!isEmptyObject(chrome.extension.getViews({type: "popup"}))) {
             var message = {
               'message_type': 'append-entry',
-              'entry_id': entry.id
+              'entry_id': entry.id,
+              'remove_prompt': remove_prompt
             };
             chrome.runtime.sendMessage(message);
           }

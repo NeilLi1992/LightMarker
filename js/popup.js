@@ -6,6 +6,10 @@ chrome.runtime.onMessage.addListener(function(message){
     generateEmptyView(message.container);
     $("#no-entry").hide().fadeIn(800);
   } else if(message.message_type === "append-entry") {
+    // 如果是在empty-list中增加了条目的话，还要移除 a.prompt
+    if(message.remove_prompt == true) {
+      $("a.prompt").remove();
+    }
     appendEntry("ul.list-group", background.entries["" + message.entry_id]);
   } else {
     console.log("Popup can't indentify message's type!");
@@ -45,77 +49,22 @@ function wrapEntry(entry) {
 }
 
 function generateEntriesView(container, entries) {
-  ///////////////////////////////
-  // 为工具栏条目添加JS效果
-  ///////////////////////////////
-
   // 点击书签按钮进行保存
   $("#bookmark").click(function(){
     background.savePage();
   });
 
-  // $("#settings").click(function(){
-
-  // });
-
-
-  //生成基本的列表
+  //若条目为0，则产生空白视图并退出函数
   if(background.getSize() == 0) {
     generateEmptyView(container);
     return;
   }
 
+  //若条目不为空，则将每一条条目append到DOM的最后
   for(id in entries ){
-    $(container).append(wrapEntry(entries[id]));
-
-    // 为每一个条目div添加click事件监听
-    $("#"+id + " span.page-title").click(function() {
-      // 打开目录
-      background.openEntry(entries[$(this).parent().attr("id")]);
-    });
+    appendEntry(container, entries[id]);
   }
 
-  ///////////////////////////////
-  //为列表添加JS效果
-  ///////////////////////////////
-
-  //去除最右边一个icon的margin-right
-  $(".level-1").first().css("margin-right", "0px");
-
-  // 鼠标离开该条目时，若箭头已被隐藏，则恢复原样
-  // 待添加span.page-title的宽度变化
-  $(".entry").mouseleave(function(){
-    $(this).children(".badge").addClass("hide");
-    $(this).children(".level-0").removeClass("hide");
-    $(this).children(".page-title").css("width", "");
-  });
-
-  // 列表按钮控制区交互逻辑
-
-  // 添加level-0监听
-  $(".level-0").click(function(){
-    $(this).siblings(".page-title").css("width", "210px");
-    $(this).addClass("hide");
-    $(this).siblings(".level-1").removeClass("hide");
-
-    //点开以后，添加level-1监听
-    $(this).siblings(".delete").click(function(){
-      $(this).addClass("hide");
-      // 当点击了删除按钮以后在再为其增加监听
-      $(this).siblings(".confirm").click(function(){
-        // 执行删除该条目，若remove函数中检测到条目数为0的话，会sendMessage
-        background.storageRemove($(this).parent().attr("id"), container);
-
-        $(this).css("background-color", "lightgreen");
-        $(this).parent().fadeOut(700, function(){
-          $(this).remove();
-
-        });
-      }).removeClass("hide");
-      // $(this).siblings(".cancel").removeClass("hide");
-      // $(this).siblings(".page-title").css("width", "185px");
-    });
-  });
 }
 
 function generateEmptyView(container) {
@@ -156,9 +105,54 @@ function generateEmptyView(container) {
   });
 }
 
+// 向列表底部增加一条新的entry
 function appendEntry(container, entry) {
-  console.log("Going to append Entry id=" + entry.id + " in container " + container);
   $(container).append(wrapEntry(entry));
+  addEntryListener(container, entry);
+}
+
+// 向对应entry增加交互监听器，接受entry对象
+function addEntryListener(container, entry) {
+ // 增加打开监听
+  $("#"+entry.id + " span.page-title").click(function() {
+    // 打开目录
+    background.openEntry(entry);
+  });
+
+  //去除最右边一个icon的margin-right
+  $("#" + entry.id + " .level-1").first().css("margin-right", "0px");
+
+  // 鼠标离开该条目时，若箭头已被隐藏，则恢复原样
+  $("#" + entry.id).mouseleave(function(){
+    $(this).children(".badge").addClass("hide");
+    $(this).children(".level-0").removeClass("hide");
+    $(this).children(".page-title").css("width", "");
+  });
+
+
+  // 按钮点击逻辑
+  $("#" +  entry.id +  " .level-0").click(function(){
+    $(this).siblings(".page-title").css("width", "210px");
+    $(this).addClass("hide");
+    $(this).siblings(".level-1").removeClass("hide");
+
+    //点开以后，添加level-1监听
+    $(this).siblings(".delete").click(function(){
+      $(this).addClass("hide");
+      // 当点击了删除按钮以后在再为其增加监听
+      $(this).siblings(".confirm").click(function(){
+        // 执行删除该条目，若remove函数中检测到条目数为0的话，会sendMessage
+        background.storageRemove($(this).parent().attr("id"), container);
+
+        $(this).css("background-color", "lightgreen");
+        $(this).parent().fadeOut(700, function(){
+          $(this).remove();
+
+        });
+      }).removeClass("hide");
+    });
+  });
+
 }
 
 // 使用runtime.getBackgroundPage来唤醒事件后台页面
