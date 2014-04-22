@@ -18,7 +18,14 @@ chrome.runtime.onMessage.addListener(function(message){
       break;
 
     case "initialized":
-      generateEntriesView("ul.list-group", background.entries);
+       if($(".prompt") == null) {
+        console.log("Going to generate view from message handler!");
+        generateEntriesView("ul.list-group", background.entries);
+       }
+      break;
+
+    case "close-popup":
+      window.close();
       break;
 
     default:
@@ -79,17 +86,20 @@ function generateEntriesView(container, entries) {
 
 function generateEmptyView(container) {
   var emptyPromptNode = $("<a href='#' class='list-group-item prompt'></a>")
+                        .css("cursor", "default")
                         .attr("id", "no-entry")
                         .append($("<span class='prompt-text'></span>").text("您目前没有保存书签！点击了解如何保存"))
-                        .append("<span class='badge'><i class='icon-arrow-down'></i></span>");
+                        .append("<span class='badge' style='cursor: pointer'><i class='icon-arrow-down'></i></span>");
 
   var howToNode = $("<a href='#' class='list-group-item prompt'></a>")
+                      .css("cursor", "default")
                       .attr("id", "how-to-save")
                       .append($("<span class='prompt-text'></span>").text("使用快捷键Ctrl+B来保存书签。更多详情"))
-                      .append("<span class='badge'><i class='icon-arrow-down'></i></span>")
+                      .append("<span class='badge' style='cursor: pointer'><i class='icon-arrow-down'></i></span>")
                       .css("display", "none");
 
   var detailsNode =  $("<a href='#' class='list-group-item prompt'></a>")
+                      .css("cursor", "default")
                       .attr("id", "details")
                       .append($("<div class='prompt-text'></div>")
                         .append($("<p></p>").text("光线书签由李泳NeilLi1992开发。"))
@@ -99,13 +109,13 @@ function generateEmptyView(container) {
                       .css("display", "none");
 
   $(container).append(emptyPromptNode);
-
   //注册点击事件
-  $("#no-entry").click(function(){
+  $("#no-entry .badge").click(function(){
+    console.log("Clicked!");
     $(this).unbind("click");
     // 需要时再载入节点
     $(container).append(howToNode);
-    $("#how-to-save").fadeIn(700).click(function(){
+    $("#how-to-save").fadeIn(700).children(".badge").click(function(){
       $(this).unbind("click");
       // 需要时再载入节点
       $(container).append(detailsNode);
@@ -151,6 +161,7 @@ function addEntryListener(container, entry) {
       $(this).addClass("hide");
       // 当点击了删除按钮以后在再为其增加监听
       $(this).siblings(".confirm").click(function(){
+        $(this).unbind("click");
         // 执行删除该条目，若remove函数中检测到条目数为0的话，会sendMessage
         background.storageRemove($(this).parent().attr("id"), container);
 
@@ -168,11 +179,8 @@ function addEntryListener(container, entry) {
 // 使用runtime.getBackgroundPage来唤醒事件后台页面
 chrome.runtime.getBackgroundPage(function(bg){
   window.background = bg;
-  // 如果bg中的初始化已经完成，则直接生成视图
-  // 否则等待background完成初始化后发送消息再获取视图
-  if(bg.initialized) {
+  if(background.initialized == true) {
+    console.log("Going to generate view programtically!");
     generateEntriesView("ul.list-group", background.entries);
   }
 });
-
-

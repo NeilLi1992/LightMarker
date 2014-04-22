@@ -16,7 +16,7 @@
   },
 
   "background": {
-    "scripts": ["jquery.min.js", "js/helper.js","js/model.js", "js/background.js"],
+    "scripts": ["js/jquery.min.js", "js/helper.js","js/model.js", "js/background.js"],
     "persistent": false
   },
 
@@ -42,13 +42,6 @@
       "description": "This is command remains for debugging"
     }
   },
-
-  "content_scripts": [
-    {
-      "matches": ["http://*/"],
-      "js": ["jquery.min.js"]
-    }
-  ],
 
   "permissions": [
     "http://*/",

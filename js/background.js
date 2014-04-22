@@ -11,13 +11,37 @@ function init() {
   updateModel();
 }
 
+function alertMessage(options) {
+  switch(options.type) {
+    case "page-saved":
+      // 依次注入messenger的相关文件
+      chrome.tabs.insertCSS(null, {file: "css/messenger.css"}, function(){
+        chrome.tabs.insertCSS(null, {file: "css/messenger-theme-future.css"}, function(){
+          chrome.tabs.executeScript(null, {file: "js/messenger.min.js"}, function(){
+            chrome.tabs.executeScript(null, {file: "js/messenger-theme-future.js"},function(){
+              // 注入Messenger执行代码
+              chrome.tabs.executeScript(null, {file: "js/messenger-helper.js"});
+              // 通知popup关闭
+              chrome.runtime.sendMessage({message_type: 'close-popup'});
+
+            });
+          });
+        });
+      });
+      break;
+
+    default:
+      console.log("alerMessage() gets invalid options");
+  }
+}
+
 function storageSave(entry, callback) {
   var to_save = Object();
   to_save[entry.id] = entry;
   chrome.storage.local.set(to_save, function(){
     // 注意，此回调函数暂时还不能判断是否成功执行，需要配合runtime.lastError使用
     updateModel(callback);
-    alert("书签已保存！");
+    alertMessage({type: "page-saved"});
   });
 }
 
@@ -27,7 +51,7 @@ function storageSave(entry, callback) {
 // "shortcut" = 键盘快捷键保存，此时不进行entry的添加
 function savePage(source) {
   //注入jquery文件
-  chrome.tabs.executeScript(null, { file: "jquery.min.js" }, function() {
+  chrome.tabs.executeScript(null, { file: "js/jquery.min.js" }, function() {
     // 编写注入代码, 通过消息传送结果
     var inject_code  = "" +
       "var message = {" +
