@@ -17,7 +17,7 @@ body {
 /*列表相关*/
 #tool-bar {
   background-color: gray;
-  color: Cyan;
+  color: white;
   font-weight: bolder;
   text-align: center;
   font-family: 微软雅黑;
@@ -48,21 +48,21 @@ body {
 
 #tool-bar .badge {
   background: none;
-  font-size: 1.5em;
+  font-size: 1.4em;
   position: relative;
-  top: -4px;
-  right: -6px;
+  top: -2px;
+  right: -5px;
   cursor: pointer;
   color: white;
 
 }
 
 #bookmark:hover {
-  color: PaleTurquoise;
+  color: DeepPink;
 }
 
-#settings:hover {
-  color: LightGrey;
+#settings i:hover {
+  color: DimGray;
 }
 
 ul.list-group {

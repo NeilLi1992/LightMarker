@@ -9,6 +9,15 @@ function updateModel(callback) {
   chrome.storage.local.get(null, function(items) {
     entries = items;
 
+    // 如果initialized为false的话，表明是刚完成初始化
+    if(!window.initialized) {
+      window.initialized = true;
+      var message = {
+        "message_type": "initialized"
+      };
+      chrome.runtime.sendMessage(message);
+    }
+
     // 如果有回调函数的话执行回调函数
     if(typeof(callback) === "function") {
       callback();

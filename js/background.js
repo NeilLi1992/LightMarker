@@ -1,3 +1,6 @@
+// 旗标：初始化未完成
+window.initialized = false;
+
 // 全局变量message用来捕捉message
 window.message = {
   inject_result: undefined

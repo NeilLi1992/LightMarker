@@ -2,17 +2,27 @@
 chrome.runtime.onMessage.addListener(function(message){
   console.log("Popup gets message!");
   console.log(message);
-  if(message.message_type === "list-emptied") {
-    generateEmptyView(message.container);
-    $("#no-entry").hide().fadeIn(800);
-  } else if(message.message_type === "append-entry") {
-    // 如果是在empty-list中增加了条目的话，还要移除 a.prompt
-    if(message.remove_prompt == true) {
-      $("a.prompt").remove();
-    }
-    appendEntry("ul.list-group", background.entries["" + message.entry_id]);
-  } else {
-    console.log("Popup can't indentify message's type!");
+
+  switch(message.message_type) {
+    case "list-emptied":
+      generateEmptyView(message.container);
+      $("#no-entry").hide().fadeIn(800);
+      break;
+
+    case "append-entry":
+      // 如果是在empty-list中增加了条目的话，还要移除 a.prompt
+      if(message.remove_prompt == true) {
+        $("a.prompt").remove();
+      }
+      appendEntry("ul.list-group", background.entries["" + message.entry_id]);
+      break;
+
+    case "initialized":
+      generateEntriesView("ul.list-group", background.entries);
+      break;
+
+    default:
+      console.log("Popup can't indentify message's type!");
   }
 });
 
@@ -158,11 +168,11 @@ function addEntryListener(container, entry) {
 // 使用runtime.getBackgroundPage来唤醒事件后台页面
 chrome.runtime.getBackgroundPage(function(bg){
   window.background = bg;
-  generateEntriesView("ul.list-group", background.entries);
-
-  // 需要等到条目生成以后才能进行的语句，要写在回调函数这下面
-
-
+  // 如果bg中的初始化已经完成，则直接生成视图
+  // 否则等待background完成初始化后发送消息再获取视图
+  if(bg.initialized) {
+    generateEntriesView("ul.list-group", background.entries);
+  }
 });
 
 
