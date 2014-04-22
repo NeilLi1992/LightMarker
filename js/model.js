@@ -17,5 +17,5 @@ function updateModel(callback) {
 }
 
 function getSize() {
-  return Object.keys(entries).length;
+  return objectSize(entries);
 }

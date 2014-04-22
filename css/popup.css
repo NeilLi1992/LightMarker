@@ -17,17 +17,33 @@ body {
 /*列表相关*/
 #tool-bar {
   background-color: gray;
-  color: lightblue;
-  font-weight: bold;
+  color: LightSlateGray;
+  font-weight: bolder;
   text-align: center;
   font-family: 微软雅黑;
-  font-size: 1.3em;
+  font-size: 1.5em;
   cursor: default;
+  padding-top: 3px;
+  padding-bottom: 3px;
+
+  -webkit-background-size: 50px 50px;
+  -moz-background-size: 50px 50px;
+  background-size: 50px 50px; /* 控制条纹的大小 */
+
+  background-color: #FF9D0F; /* 修改这个背景颜色，下面的是 CSS 条纹 */
+  background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.25, rgba(255, 255, 255, .2)), color-stop(.25, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.75, rgba(255, 255, 255, .2)), color-stop(.75, transparent), to(transparent)); /* Chrome,Safari4+ */
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent); /* Chrome10+,Safari5.1+ */
+  background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent); /* FF3.6+ */
+  background-image: -ms-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent); /* IE 10+ */
+  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent); /* Opera */
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent); /* W3C */
 }
 
 #title {
+  font-size: 1.2em;
   position: relative;
   left: 8px;
+  letter-spacing: 0.8em;
 }
 
 #tool-bar .badge {
@@ -38,10 +54,11 @@ body {
   right: -6px;
   cursor: pointer;
   color: white;
+
 }
 
 #bookmark:hover {
-  color: Coral;
+  color: PaleTurquoise;
 }
 
 #settings:hover {
