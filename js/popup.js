@@ -139,7 +139,7 @@ function init() {
       console.log("IDB未打开，init 准备重入。");
       // 开启加载提示
       toggleLoadingView(BASE_CONTAINER, "show");
-      setTimeout(init, 10);
+      setTimeout(init, 2000);
     } else {
       // 确证IDB已打开
       // 如果已经开启加载提示的话，则关闭
@@ -154,7 +154,7 @@ function init() {
       });
       // 点击齿轮按钮，打开设置页面，关闭popup
       $("#settings").click(function(){
-        chrome.tabs.create({url:"settings.html"}, function(){
+        chrome.tabs.create({url:"details.html"}, function(){
           window.close();
         });
       }).children("i").mouseenter(function(){
@@ -179,10 +179,11 @@ function init() {
 */
 function toggleLoadingView(container, display) {
   if(display === "show") {
-    var node = $("<a href='#' class='list-group-item' id='loading'></a>").css("text-align", "center").css("cursor", "default");
-    node.append("<span class='prompt-text'><i class='icon-spinner icon-spin'></i>&nbsp&nbsp&nbsp&nbsp加载中...</span>");
-
-    $(container).append(node);
+    if(!document.getElementById("loading")){
+      var node = $("<a href='#' class='list-group-item' id='loading'></a>").css("text-align", "center").css("cursor", "default");
+      node.append("<span class='prompt-text'><i class='icon-spinner icon-spin'></i>&nbsp&nbsp&nbsp&nbsp加载中...</span>");
+      $(container).append(node);
+    }
   } else {
     if(document.getElementById("loading")) {
       var child = document.getElementById("loading");
@@ -205,17 +206,7 @@ function generateEmptyView(container) {
                       .css("cursor", "default")
                       .attr("id", "how-to-save")
                       .append($("<span class='prompt-text'></span>").text("使用快捷键Ctrl+B来保存书签。更多详情"))
-                      .append("<span class='badge' style='cursor: pointer'><i class='icon-arrow-down'></i></span>")
-                      .css("display", "none");
-
-  var detailsNode =  $("<a href='#' class='list-group-item prompt'></a>")
-                      .css("cursor", "default")
-                      .attr("id", "details")
-                      .append($("<div class='prompt-text'></div>")
-                        .append($("<p></p>").text("光线书签由李泳NeilLi1992开发。"))
-                        .append($("<p></p>").text("其最重要的功能是可以保存页面的滑动条位置。后续功能正在开发中。"))
-                        .append($("<p></p>").text("联系我：yong.li1992@foxmail.com"))
-                        )
+                      .append("<span class='badge' style='cursor: pointer'><i class='icon-external-link'></i></span>")
                       .css("display", "none");
 
   $(container).append(emptyPromptNode);
@@ -225,11 +216,9 @@ function generateEmptyView(container) {
     // 需要时再载入节点
     $(container).append(howToNode);
     $("#how-to-save").fadeIn(700).children(".badge").click(function(){
-      $(this).unbind("click");
-      // 需要时再载入节点
-      $(container).append(detailsNode);
-      $(".prompt-text p").css("margin-bottom", "0px");
-      $("#details").fadeIn(700);
+      chrome.tabs.create({url:"details.html"}, function(){
+          window.close();
+        });
     });
   });
 }

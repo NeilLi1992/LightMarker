@@ -73,9 +73,6 @@ helper.alertMessage = function(options, tabID) {
   初始化函数，重建IDB的连接
 */
 function init() {
-  chrome.commands.getAll(function(commands){
-    console.log(commands);
-  });
   Model.init();
 }
 
@@ -96,12 +93,17 @@ function savePage(callback) {
 
   // 查询到当前标签页
   chrome.tabs.query({
+    currentWindow: true,
     active: true
   }, function(tabs){
     var currentTab = tabs[0];
     // 向获取到的标签页注入代码
     chrome.tabs.executeScript(currentTab.id, {code: injectCode}, function(result){
-      console.log(result);
+      if(typeof result === "undefined") {
+        console.log("当前页面无法注入！页面不能被保存！");
+        alert("当前页面有误，无法进行保存！");
+        return;
+      }
       if(typeof result[0] === "object") {
         // 构造entry对象
         var newEntry = {
