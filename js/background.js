@@ -1,42 +1,67 @@
-// 旗标：初始化未完成
-window.initialized = false;
+/*
+  Background.js在每次浏览器完全关闭后（所有chrome窗口实例），下次重启时都会重新执行一遍，
+  空闲一段时间后，下次唤醒时也会重头执行一遍，
+  每一次Model的IDB连接也会自动关闭，需要使用Model.init()重建连接
+  每次都需要调用init来完成初始化工作
+*/
 
-// 全局变量message用来捕捉message
-window.message = {
-  inject_result: undefined
-};
+// 当扩展程序第一次安装、更新至新版本或 Chrome 浏览器更新至新版本时产生。
+chrome.runtime.onInstalled.addListener(function(){
+    console.log("onInstalled事件触发");
+    Model.init();
+});
 
-// 注册消息事件监听器
-chrome.runtime.onMessage.addListener(function(message){
-  if(message.message_type === "inject_result") {
-    window.message.inject_result = message;
-  } else {
-    console.log("Background can't indentify message's type!");
+// 注册快捷键监听器，分发快捷键命令，注意要确保IDB已打开
+chrome.commands.onCommand.addListener(function(command){
+  switch(command) {
+    case "save-page":
+      savePage();
+      break;
+
+    default:
   }
 });
 
-function init() {
-  //从存储空间读取model,存储到window.entries中
-  updateModel();
+// 定义一些不涉及控制器核心功能，绝不会被视图直接调用的辅助函数
+var helper = {};
+// 检查IDB是否已打开
+helper.isIDBOpened = function() {
+  if(Model.db != null) {
+    return true;
+  } else {
+    return false;
+  }
 }
-
-function alertMessage(options) {
+// 通过获取entry保存时的数据，通过对tabID注入新的script进行现在内容的分析，进一步算出滚动距离
+helper.getScrollDistance = function(entry, tabID) {
+  return entry.scrollPos;
+}
+// 在tabID中调用弹窗
+helper.alertMessage = function(options, tabID) {
   switch(options.type) {
     case "page-saved":
-      // 依次注入messenger的相关文件
-      chrome.tabs.insertCSS(null, {file: "css/messenger.css"}, function(){
-        chrome.tabs.insertCSS(null, {file: "css/messenger-theme-future.css"}, function(){
-          chrome.tabs.executeScript(null, {file: "js/messenger.min.js"}, function(){
-            chrome.tabs.executeScript(null, {file: "js/messenger-theme-future.js"},function(){
-              // 注入Messenger执行代码
-              chrome.tabs.executeScript(null, {file: "js/messenger-helper.js"});
-              // 通知popup关闭
-              chrome.runtime.sendMessage({message_type: 'close-popup'});
+      // // 依次注入messenger的相关文件
+      // chrome.tabs.insertCSS(tabID, {file: "css/messenger.css"}, function(){
+      //   chrome.tabs.insertCSS(tabID, {file: "css/messenger-theme-future.css"}, function(){
+      //     chrome.tabs.executeScript(tabID, {file: "js/messenger.min.js"}, function(){
+      //       chrome.tabs.executeScript(tabID, {file: "js/messenger-theme-future.js"},function(){
+      //         // 注入Messenger执行代码
+      //         chrome.tabs.executeScript(tabID, {file: "js/messenger-helper.js"});
+      //         // 通知popup关闭
+      //         chrome.runtime.sendMessage({message_type: 'close-popup'});
+      //       });
+      //     });
+      //   });
+      // });
+      // alert("书签保存成功！");
+      chrome.tabs.insertCSS(tabID, {file: "css/message_default.css"}, function(){
+        chrome.tabs.executeScript(tabID, {file: "js/message.js"}, function(){
+          chrome.tabs.executeScript(tabID, {file: "js/message-helper.js"}, function(){
 
-            });
           });
         });
       });
+
       break;
 
     default:
@@ -44,137 +69,153 @@ function alertMessage(options) {
   }
 }
 
-function storageSave(entry, callback) {
-  var to_save = Object();
-  to_save[entry.id] = entry;
-  chrome.storage.local.set(to_save, function(){
-    // 注意，此回调函数暂时还不能判断是否成功执行，需要配合runtime.lastError使用
-    updateModel(callback);
-    alertMessage({type: "page-saved"});
+/*
+  初始化函数，重建IDB的连接
+*/
+function init() {
+  chrome.commands.getAll(function(commands){
+    console.log(commands);
   });
+  Model.init();
 }
 
-// 保存当前活动标签中的页面
-// source表示调用来源
-// "click" = 从popup窗口点击保存, 此时要进行新entry的添加
-// "shortcut" = 键盘快捷键保存，此时不进行entry的添加
-function savePage(source) {
-  //注入jquery文件
-  chrome.tabs.executeScript(null, { file: "js/jquery.min.js" }, function() {
-    // 编写注入代码, 通过消息传送结果
-    var inject_code  = "" +
-      "var message = {" +
-        "'message_type': 'inject_result'," +
-        "'page_title': $('title').text()," +
-        "'scroll_pos': $(document).scrollTop()," +
-        "'page_height': $(document).height()" +
-      "};" +
-      "chrome.runtime.sendMessage(message);";
+// TODO
+/*
+  需要保存书签时调用。有可能被popup编程触发，也可能接收到快捷键命令触发
+  需要加以识别以确定是否要通知popup更新视图，给callback传入参数newEntry
+*/
+function savePage(callback) {
+  // 编写注入代码, 通过消息传送结果
+  var injectCode  = "" +
+    "result = {" +
+      "'pageTitle': document.title," +
+      "'scrollPos': document.body.scrollTop," +
+      "'pageHeight': document.body.scrollHeight" +
+    "};";
+  //注入代码，从页面获得相关数值
 
-    console.log("Code to inject:" + inject_code);
-    //获得scrollTop()数值
-    chrome.tabs.executeScript(null, { code: inject_code }, function(result){
-      //要在下一层的回调函数中中使用，定义为全局变量
-      if (typeof window.message.inject_result != "undefined")
-      {
-        page_title = window.message.inject_result.page_title;
-        scroll_pos = window.message.inject_result.scroll_pos;
-        page_height = window.message.inject_result.page_height;
-      } else {
-        console.log("window.message.inject_result is undefined!");
-      }
-      //嵌套在外层语句的异步回调函数中，确保上面的已经执行完毕了再执行下面的
-      chrome.tabs.getSelected(null, function(tab){
-        //内存语句的回调函数，确保两条异步语句都已执行完毕
-        var entry = {
-          "id": $.now(),
-          "time_stamp": $.now(),
-          "url": tab.url,
-          "page_title": page_title,
-          "scroll_pos": scroll_pos,
-          "page_height": page_height
+  // 查询到当前标签页
+  chrome.tabs.query({
+    active: true
+  }, function(tabs){
+    var currentTab = tabs[0];
+    // 向获取到的标签页注入代码
+    chrome.tabs.executeScript(currentTab.id, {code: injectCode}, function(result){
+      console.log(result);
+      if(typeof result[0] === "object") {
+        // 构造entry对象
+        var newEntry = {
+          "timeStamp": new Date().getTime(),
+          "url": currentTab.url,
+          "pageTitle": result[0].pageTitle,
+          "scrollPos": result[0].scrollPos,
+          "pageHeight": result[0].pageHeight,
+          "listID": null
         };
 
-        //保存条目
-        var remove_prompt = getSize() == 0 ? true : false; //如果之前size=0，现在新加了条目，并且popup是打开的，则要移除提示信息
-        storageSave(entry, function(){
-          // 如果popup窗口打开的话，发送消息通知popup添加新的条目
-          if(!isEmptyObject(chrome.extension.getViews({type: "popup"}))) {
-            var message = {
-              'message_type': 'append-entry',
-              'entry_id': entry.id,
-              'remove_prompt': remove_prompt
-            };
-            chrome.runtime.sendMessage(message);
+        // 向IDB保存条目
+        addEntry(newEntry, function(){
+          // 保存成功后，执行回调函数并传回参数newEntry
+          if(callback && typeof callback === "function") {
+            callback(newEntry);
           }
 
+          helper.alertMessage({type:"page-saved"}, currentTab.id);
         });
-        console.log("Successfuly saved!");
-      });
 
-    });
-  });
-}
-
-function storageRemove(id, container) {
-  chrome.storage.local.remove("" + id, function(){
-    console.log("Here! Execution finished!");
-    updateModel(function(){
-      console.log("Size=" + getSize());
-      // 通知popup，没有任何条目了
-      if(getSize() == 0 ) {
-        console.log("Going to send notification!");
-        var message = {
-          'message_type': 'list-emptied',
-          'container': container
-        };
-        console.log(message);
-        chrome.runtime.sendMessage(message);
+      } else {
+        console.log("页面注入结果不是object！");
       }
     });
   });
 }
 
-function load() {
 
-}
-
-// 通过entry获取保存时的数据。通过tabID对Tab注入新的script进行现在内容的分析，获取当前数据
-// 从而进一步计算出滚动距离
-function getScrollDistance(entry, tabID) {
-  return entry.scroll_pos;
-}
-
-function openEntry(entry) {
+// TODO 始终无法在google搜索结果页面执行成功
+/*
+  视图中条目被点击时，掉用以打开页面
+*/
+function openPage(entry, callback) {
   // 打开参数
-  var createProperties = {
+  var createOptions = {
     "url": entry.url
   };
 
-  chrome.tabs.create(createProperties, function(tab) {
+  chrome.tabs.create(createOptions, function(tab) {
     // 打开成功，编写执行代码
-    var scrollDistance = getScrollDistance(entry, tab.id);
-    var inject_code = "window.onload = function(){window.scrollTo(0, " + scrollDistance + ");}";
-    chrome.tabs.executeScript(tab.id, { code: inject_code }, function() {});
+    var scrollDistance = helper.getScrollDistance(entry, tab.id);
+    var injectCode = "window.scrollTo(0, " + scrollDistance + ");";
+    console.log("注入代码："+injectCode);
+    chrome.tabs.executeScript(tab.id, { code: injectCode}, function(){
+      if(callback && typeof callback === "function") {
+        callback();
+      }
+    });
   });
+
 }
 
-chrome.commands.onCommand.addListener(function(command) {
-  // 判断command
-  switch(command) {
-    case "save-page":
-      savePage();
+/*
+  添加条目
+  @private 由savePage调用
+*/
+function addEntry(entry, callback) {
+  Model.addToStore(entry, "Entries", callback);
+}
+
+/*
+  获取条目
+  @param options: {require: "all" 所有 || "single" 单条 || "search" 搜索 }
+  if (require=="single")  use options.timeStamp as key
+  在获取成功以后，会给callback传入result参数
+*/
+function getEntry(options, callback) {
+  switch(options.require) {
+    case "all":
+      Model.getAllFromStore("Entries", callback);
       break;
 
-    case "save-pos":
-      console.log("save pos command!");
+    case "single":
+      Model.getFromStore(options.timeStamp, "Entries", callback);
       break;
 
-    case "debug":
-      console.log("debug command!");
+    case "search":
+      break;
+
+    default:
+      console.log("无法识别background getEntry接收的参数！");
       break;
   }
-});
+}
 
-// 初始化
+// TODO
+/*
+  更新条目
+*/
+function updateEntry() {
+
+}
+
+/*
+  删除条目
+*/
+function deleteEntry(timeStamp, callback) {
+  // 从IDB中删除
+  Model.deleteFromStore(timeStamp, "Entries", callback);
+}
+
+/*
+  返回条目的数量
+*/
+function getNumberOfEntries(callback) {
+  Model.countStore("Entries", callback);
+}
+
+// TODO 列表功能
+// function addList() {}
+// function getList() {}
+// function updateList() {}
+// function deleteList() {}
+
+// 每次空闲一段时间后重新唤醒时都要初始化
 init();

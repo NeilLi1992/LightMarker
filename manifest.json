@@ -16,11 +16,11 @@
   },
 
   "background": {
-    "scripts": ["js/jquery.min.js", "js/helper.js","js/model.js", "js/background.js"],
+    "scripts": ["js/jquery.min.js", "js/model.js", "js/background.js"],
     "persistent": false
   },
 
-   "commands": {
+  "commands": {
     "save-page": {
       "suggested_key": {
         "default": "Ctrl+B",

@@ -103,7 +103,7 @@ span.confirm {
 */
 
 /*空白列表提示消息的样式*/
-.prompt .prompt-text {
+.prompt-text {
   font-weight: bolder;
   font-family: 微软雅黑;
   width: 277px;
