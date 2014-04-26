@@ -154,7 +154,7 @@ function init() {
       });
       // 点击齿轮按钮，打开设置页面，关闭popup
       $("#settings").click(function(){
-        chrome.tabs.create({url:"details.html"}, function(){
+        chrome.tabs.create({url:"details.html#settings"}, function(){
           window.close();
         });
       }).children("i").mouseenter(function(){

@@ -101,7 +101,7 @@ function savePage(callback) {
     chrome.tabs.executeScript(currentTab.id, {code: injectCode}, function(result){
       if(typeof result === "undefined") {
         console.log("当前页面无法注入！页面不能被保存！");
-        alert("当前页面有误，无法进行保存！");
+        alert("当前页面无法进行保存！");
         return;
       }
       if(typeof result[0] === "object") {

@@ -26,20 +26,15 @@
         "default": "Ctrl+B",
         "mac": "Command+B"
       },
-      "description": "Save page"
+      "description": "保存页面"
     },
-    "save-pos": {
+    "_execute_browser_action": {
       "suggested_key": {
-        "default": "Ctrl+V",
-        "mac": "Command+V"
-      },
-      "description": "Test storage function"
-    },
-    "debug": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+V"
-      },
-      "description": "This is command remains for debugging"
+        "windows": "Ctrl+Shift+B",
+        "mac": "Command+Shift+B",
+        "chromeos": "Ctrl+Shift+U",
+        "linux": "Ctrl+Shift+J"
+      }
     }
   },
 
@@ -47,6 +42,7 @@
     "http://*/",
     "activeTab",
     "tabs",
-    "storage"
+    "storage",
+    "clipboardWrite"
   ]
 }
