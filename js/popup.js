@@ -151,7 +151,12 @@ function init() {
         background.savePage(function(){
           window.close();
         });
+      }).mouseenter(function(){
+        $(this).addClass("animated pulse");
+      }).mouseleave(function(){
+        $(this).removeClass("animated pulse");
       });
+
       // 点击齿轮按钮，打开设置页面，关闭popup
       $("#settings").click(function(){
         chrome.tabs.create({url:"details.html#settings"}, function(){

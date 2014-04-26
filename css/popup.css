@@ -57,8 +57,13 @@ body {
 
 }
 
+
+#bookmark {
+  -webkit-animation-iteration-count: infinite;
+}
+
 #bookmark:hover {
-  color: DeepPink;
+  color: rgb(200, 56, 56);
 }
 
 #settings i:hover {
