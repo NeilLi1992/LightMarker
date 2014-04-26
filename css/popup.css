@@ -26,6 +26,9 @@ body {
   padding-top: 3px;
   padding-bottom: 3px;
 
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+
   -webkit-background-size: 50px 50px;
   -moz-background-size: 50px 50px;
   background-size: 50px 50px; /* 控制条纹的大小 */
