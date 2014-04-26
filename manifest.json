@@ -42,7 +42,6 @@
     "http://*/",
     "activeTab",
     "tabs",
-    "storage",
-    "clipboardWrite"
+    "storage"
   ]
 }
