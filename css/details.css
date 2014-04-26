@@ -1,0 +1,64 @@
+.navwrapper {
+  width: 800px;
+  margin: auto;
+  margin-top: 20px;
+  left: 0px;
+  right: 0px;
+}
+
+.navbar {
+  border-radius: 15px;
+  background-color: orange;
+  color: white;
+}
+
+.navbar-mytext {
+  font-family: 微软雅黑;
+}
+
+.navbar-default .navbar-brand {
+  font-size: 1.3em;
+  /*font-weight: bold;*/
+  color:white;
+}
+
+.navbar-default .navbar-nav>li>a {
+  font-size: 1.1em;
+  color: white;
+}
+
+
+/*
+
+*/
+
+#home {
+  background: lightblue;
+  height: 500px;
+}
+
+#features {
+  background: white;
+  height: 300px;
+}
+
+
+#settings {
+  background: gray;
+  height: 800px;
+}
+
+#about {
+  background: lightgreen;
+  height: 800px;
+}
+
+#how-to {
+  background: pink;
+  height: 800px;
+}
+
+#update {
+  background: brown;
+  height: 800px;
+}

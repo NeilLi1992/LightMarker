@@ -139,7 +139,7 @@ function init() {
       console.log("IDB未打开，init 准备重入。");
       // 开启加载提示
       toggleLoadingView(BASE_CONTAINER, "show");
-      setTimeout(init, 2000);
+      setTimeout(init, 10);
     } else {
       // 确证IDB已打开
       // 如果已经开启加载提示的话，则关闭
