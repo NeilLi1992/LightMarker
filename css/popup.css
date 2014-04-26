@@ -50,8 +50,8 @@ body {
   background: none;
   font-size: 1.4em;
   position: relative;
-  top: -2px;
-  right: -5px;
+  bottom: 2px;
+  left: 31px;
   cursor: pointer;
   color: white;
 
@@ -78,6 +78,11 @@ ul.list-group {
 .icon {
   position: relative;
   top: 25%;
+}
+
+.list-group-item:first-child {
+  border-top-right-radius: 0px !important;
+  border-top-left-radius: 0px !important;
 }
 
 /*控制条目名称的显示样式*/

@@ -91,7 +91,7 @@ helper.activateEntry = function(entry) {
 
   // 按钮点击逻辑
   baseJqObj.children("span.level-0").click(function(){
-    $(this).siblings("span.page-title").css("width", "210px");
+    $(this).siblings("span.page-title").css("width", "245px");
     $(this).addClass("hide");
     $(this).siblings("span.level-1").removeClass("hide");
 
@@ -124,7 +124,7 @@ helper.activateEntry = function(entry) {
 // 将单个entry对象附加到container区域的最后
 helper.appendEntry = function(container, entry) {
   // 使用$("#tool-bar").after()可以调整顺序
-  $(container).append(helper.wrapEntry(entry));
+  $(container).prepend(helper.wrapEntry(entry));
   helper.activateEntry(entry);
 }
 
