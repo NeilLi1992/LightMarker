@@ -1,0 +1,11 @@
+chrome.runtime.onInstalled.addListener(function(){console.log("onInstalled事件触发");Model.init();});chrome.commands.onCommand.addListener(function(a){switch(a){case"save-page":savePage();
+break;default:}});var helper={};helper.isIDBOpened=function(){if(Model.db!=null){return true;}else{return false;}};helper.getScrollDistance=function(b,a){return b.scrollPos;
+};helper.alertMessage=function(b,a){switch(b.type){case"page-saved":chrome.tabs.insertCSS(a,{file:"css/message_default.css"},function(){chrome.tabs.executeScript(a,{file:"js/message.js"},function(){chrome.tabs.executeScript(a,{file:"js/message-helper.js"},function(){});
+});});break;default:console.log("alerMessage() gets invalid options");}};function init(){Model.init();}function savePage(b){var a="result = {'pageTitle': document.title,'scrollPos': document.body.scrollTop,'pageHeight': document.body.scrollHeight};";
+chrome.tabs.query({currentWindow:true,active:true},function(c){var d=c[0];chrome.tabs.executeScript(d.id,{code:a},function(e){if(typeof e==="undefined"){console.log("当前页面无法注入！页面不能被保存！");
+alert("当前页面无法进行保存！");return;}if(typeof e[0]==="object"){var f={timeStamp:new Date().getTime(),url:d.url,pageTitle:e[0].pageTitle,scrollPos:e[0].scrollPos,pageHeight:e[0].pageHeight,listID:null};
+addEntry(f,function(){if(b&&typeof b==="function"){b(f);}helper.alertMessage({type:"page-saved"},d.id);});}else{console.log("页面注入结果不是object！");}});});}function openPage(b,c){var a={url:b.url};
+chrome.tabs.create(a,function(e){var d=helper.getScrollDistance(b,e.id);var f="window.scrollTo(0, "+d+");";console.log("注入代码："+f);chrome.tabs.executeScript(e.id,{code:f},function(){if(c&&typeof c==="function"){c();
+}});});}function addEntry(a,b){Model.addToStore(a,"Entries",b);}function getEntry(a,b){switch(a.require){case"all":Model.getAllFromStore("Entries",b);break;
+case"single":Model.getFromStore(a.timeStamp,"Entries",b);break;case"search":break;default:console.log("无法识别background getEntry接收的参数！");break;}}function updateEntry(a,b){Model.putToStore(a,"Entries",b);
+}function deleteEntry(a,b){Model.deleteFromStore(a,"Entries",b);}function getNumberOfEntries(a){Model.countStore("Entries",a);}init();

@@ -1,0 +1,284 @@
+
+/*首页*/
+#home {
+  background: SteelBlue;
+  height: 500px;
+}
+
+#home-icon-img {
+  display: block;
+  margin: auto;
+  padding-top: 40px;
+  width: 200px;
+  height: 240px;
+
+}
+
+#home-caption {
+  font-family: 微软雅黑;
+  margin: auto;
+  text-align: center;
+  color: MintCream;
+}
+
+#home-caption .caption-text {
+  font-family: 微软雅黑;
+}
+
+#LightMarker {
+  letter-spacing: 0.5em;
+  position: relative;
+  left: 10px;
+  font-size: 45px;
+}
+
+#description {
+  font-size: 1.1em;
+  margin-top: 40px;
+}
+
+
+/*导航条*/
+.navwrapper {
+  z-index: 100;
+  width: 800px;
+  margin: auto;
+  margin-top: 20px;
+  left: 0px;
+  right: 0px;
+}
+
+.navbar {
+  border-radius: 15px;
+  background-color: orange;
+  color: white;
+}
+
+.navbar-mytext {
+  font-family: 微软雅黑;
+}
+
+.navbar-default .navbar-brand {
+  font-size: 1.3em;
+  /*font-weight: bold;*/
+  color:white;
+}
+
+.navbar-default .navbar-nav>li>a {
+  font-size: 1.1em;
+  color: white;
+}
+
+.navbar-default .navbar-nav>.active>a {
+  background: palegreen;
+}
+
+
+/*特色*/
+#features {
+  background: white;
+  height: 400px;
+  overflow: hidden;
+}
+
+
+.feature {
+  width: 33%;
+  display: block;
+  float: left;
+  text-align: center;
+  position: relative;
+  left: 5px;
+  top: 20px;
+  padding-left: 60px;
+  padding-right: 60px;
+}
+
+.feature img {
+  height: 150px;
+}
+
+.feature .caption {
+  padding-top: 10px;
+  font-family: 微软雅黑;
+  font-size: 1.5em;
+}
+
+.feature .description {
+  letter-spacing: 1px;
+  display: inline;
+  width: 350px;
+  text-align: left;
+}
+
+.feature i {
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+/*General*/
+
+.section-title {
+  font-family: 微软雅黑;
+  font-size: 70px;
+}
+
+.section-subtitle {
+  font-family: 微软雅黑;
+  font-size: 30px;
+}
+
+.section-content {
+  font-family: 微软雅黑;
+  font-size: 17px;
+}
+
+/*特色*/
+
+/*使用说明*/
+#how-to {
+  font-family: 微软雅黑;
+  background: pink;
+  height: 800px;
+}
+
+#how-to .section-heros {
+  /*margin-right: -1%;*/
+  margin-left: 70%;
+  padding-top: 80px;
+}
+
+#how-to .section-heros .section-subtitle {
+  margin-left: 11px;
+  margin-top: -20px;
+}
+
+#how-to .section-content {
+  margin-left: 10%;
+  width: 50%;
+}
+
+#how-to #shortcut {
+  margin-left: 10px;
+  width: 100px;
+}
+
+
+/*设置*/
+#settings {
+  background: gray;
+  height: 800px;
+  color: white;
+}
+
+#settings .section-heros{
+  padding-top: 80px;
+  margin-left: 5%;
+}
+
+#settings .section-subtitle {
+  margin-top: -20px;
+  margin-left: 10px;
+}
+
+#settings .section-content {
+  width: 50%;
+  margin-left: 30%;
+}
+
+#settings i {
+  font-size: 25px;
+}
+
+/*更新记录*/
+#update {
+  background: Khaki;
+  height: 800px;
+}
+
+#update .section-heros {
+  margin-left: 70%;
+  padding-top: 80px;
+}
+
+#update .section-heros .section-subtitle{
+  margin-top: -20px;
+}
+
+#update ul {
+  list-style: none;
+}
+
+#update .section-content {
+  width: 50%;
+  margin-left: 10%;
+}
+
+#update .version-title {
+  font-size: 20px;
+}
+
+#update .version-date {
+  padding-left: 20px;
+  color: Silver;
+  font-size: 17px;
+}
+
+#update .version-description {
+  padding-left: 15%;
+}
+
+/*联系我*/
+#contact {
+  background: Chocolate;
+  height: 800px;
+  color: white;
+}
+
+#contact .section-heros {
+  margin-left: 5%;
+  padding-top: 80px;
+}
+
+#contact .section-heros .section-subtitle {
+  margin-top: -20px;
+}
+
+#contact #my-photo {
+  width: 210px;
+  margin-left: 5%;
+}
+
+#contact .section-content {
+  width: 50%;
+  margin-top: -210px;
+  margin-left: 30%;
+}
+
+#contact #copy-email {
+  cursor: pointer;
+}
+
+#contact .social-networking {
+  display: inline-block;
+}
+
+#contact .social-networking img {
+  width: 30px;
+  margin-top: -5px;
+  margin-right: 5px;
+}
+
+#contact .social-networking h3 {
+  color: white;
+}
+
+#contact .social-networking a:hover {
+  text-decoration: none;
+}
+
+/*页脚*/
+#footer-icon {
+  text-align: center;
+  margin-top: -150px;
+}

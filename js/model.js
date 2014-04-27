@@ -150,7 +150,7 @@ Model.getAllFromStore = function(osName, callback) {
       var res = e.target.result;
       if(res) {
         resObj[res.key] = res.value;
-        res.continue();
+        res['continue']();
       } else {
         // 已经完成全部数据的获取，存储在resObj中
         console.log("获取全部数据成功！");
@@ -206,7 +206,7 @@ Model.deleteFromStore = function(key, osName, callback) {
       }
     }
     // 提交具体操作的请求，但是请求提交成功不代表事务已经完成
-    var request = t.objectStore(osName).delete(key);
+    var request = t.objectStore(osName)['delete'](key);
     // request.onerror = function(e) { console.log("删除数据失败 ", e.target.error.name);}
     // request.onsuccess = function(e) { }
   } else {  console.log("删除数据失败，IDB尚未打开，Model.db对象为null。");  }
@@ -227,7 +227,7 @@ Model.countStore = function(osName, callback) {
         var result = e.target.result;
         if(result) {
           size = size + 1;
-          result.continue();
+          result['continue']();
         } else {
           if(callback && typeof callback === "function") {
              callback(size);
@@ -256,7 +256,7 @@ Model.clearStore = function(osName, callback) {
       var store = t.objectStore(osName);
       var keyRange = IDBKeyRange.lowerBound(0);
       // 将keyRange指定的所有数据全部删除
-      var request = store.delete(keyRange);
+      var request = store['delete'](keyRange);
 
     } else {  console.log("清空os失败，指定的os不存在。");  }
   } else {  console.log("清空os失败，IDB尚未打开，Model.db对象为null。");  }
