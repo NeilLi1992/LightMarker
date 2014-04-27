@@ -40,7 +40,7 @@ helper.wrapEntry = function(entry){
   // 创建节点的基本形式
   var node = $("<a href='#' class='list-group-item'></a>");
   node.attr("id", entry.timeStamp);
-  node.append($("<span class='page-title'></span>").text(entry.pageTitle));
+  node.append($("<span class='page-title' title='" + entry.pageTitle + "'></span>").text(entry.pageTitle));
 
   // 增加按钮
   // 按钮类的添加格式为 badge + 功能 + 级别 + 效果
@@ -95,7 +95,8 @@ helper.activateEntry = function(entry) {
     $(this).addClass("hide");
     $(this).siblings("span.level-1").removeClass("hide");
 
-    //点开以后，添加level-1监听
+    // 点开以后，添加level-1监听
+    // 删除逻辑
     $(this).siblings("span.delete").click(function(){
       $(this).addClass("hide");
       // 当点击了删除按钮以后在再为其增加监听
@@ -119,6 +120,11 @@ helper.activateEntry = function(entry) {
         });
       }).removeClass("hide");
     });
+    // 单条视图逻辑
+    $(this).siblings("span.details").click(function(){
+      $(this).unbind("click");
+      changeView("allEntries", "singleEntry", entry);
+    });
   });
 }
 // 将单个entry对象附加到container区域的最后
@@ -127,7 +133,6 @@ helper.appendEntry = function(container, entry) {
   $(container).prepend(helper.wrapEntry(entry));
   helper.activateEntry(entry);
 }
-
 
 /*
   初始化函数，进行popup打开后的初始化操作
@@ -251,8 +256,47 @@ function generateAllEntriesView(container, entries) {
 /*
   生成视图2：单个标签详情视图
 */
-function generateSingleEntryView() {
+function generateSingleEntryView(entry) {
+  // 标题节点
+  var titleNode = $("<a href='#' class='list-group-item details' id='title'></a>");
+  titleNode.append($("<span class='data-name'>标题</span>"));
+  titleNode.append($("<span class='separator'></span>"));
+  titleNode.append($("<span class='data-content'></span>").text(entry.pageTitle));
+  $(BASE_CONTAINER).append(titleNode);
+  // 地址节点
+  var urlNode = $("<a href='#' class='list-group-item details' id='url'></a>");
+  urlNode.append($("<span class='data-name'>地址</span>"));
+  urlNode.append($("<span class='separator'></span>"));
+  urlNode.append($("<span class='data-content'></span>").text(entry.url));
+  $(BASE_CONTAINER).append(urlNode);
 
+  // 时间节点
+  var dateObj = new Date(entry.timeStamp);
+  var timeNode = $("<a href='#' class='list-group-item details' id='time'></a>");
+  timeNode.append($("<span class='data-name'>时间</span>"));
+  timeNode.append($("<span class='separator'></span>"));
+  timeNode.append($("<span class='data-content'></span>").text(dateObj.toLocaleString()));
+  $(BASE_CONTAINER).append(timeNode);
+
+  // // 滑动条位置节点
+  // var scrollPosNode = $("<a href='#' class='list-group-item details' id='scrollPos'></a>");
+  // scrollPosNode.append($("<span class='data-name'>滚动条位置</span>"));
+  // scrollPosNode.append($("<span class='separator'></span>"));
+  // scrollPosNode.append($("<span class='data-content'></span>").text(entry.scrollPos));
+  // $(BASE_CONTAINER).append(scrollPosNode);
+
+  // 列表节点
+  var listNode = $("<a href='#' class='list-group-item details' id='list'></a>");
+  listNode.append($("<span class='data-name'>列表</span>"));
+  listNode.append($("<span class='separator'></span>"));
+  listNode.append($("<span class='data-content'></span>").text("暂不可用"));
+  $(BASE_CONTAINER).append(listNode);
+
+  // 按钮节点
+  var buttonsNode = $("<a href='#' class='list-group-item details' id='buttons'></a>");
+  buttonsNode.append($("<div><button type='button' class='btn btn-primary'><i class='icon-pencil'></i>&nbsp修&nbsp&nbsp改</button></div>"));
+  buttonsNode.append($("<div><button type='button' class='btn btn-danger'><i class='icon-trash'></i>&nbsp删&nbsp&nbsp除</button></div>"));
+  $(BASE_CONTAINER).append(buttonsNode);
 }
 
 // TODO
@@ -283,7 +327,7 @@ function generateSearchResultView() {
 /*
   视图切换函数
 */
-function changeView(before, after) {
+function changeView(before, after, entry) {
   if(before == "empty" && after == "allEntries") {
     // 空白——》全部条目：添加书签后os大小=1
 
@@ -291,6 +335,33 @@ function changeView(before, after) {
     // 全部条目——》空白：删除书签至大小=0
     console.log("产生空白视图");
     generateEmptyView(BASE_CONTAINER);
+  } else if(before == "allEntries" && after == "singleEntry") {
+    console.log("产生单条视图");
+    // 清空原来的视图*
+    $(BASE_CONTAINER).children().remove();
+    // 为工具条最左侧增加返回按钮
+    // 构造jq对象
+    var leftArrow = $("<span class='badge' id='back' title='返回'><i class='icon-arrow-left'></i></span>")
+                .css("position", "fixed")
+                .css("left", "6px")
+                .css("top", "3px")
+                .click(function(){
+                  // 点击时切换回全部条目视图
+                  changeView("singleEntry", "allEntries");
+                });
+    $("#tool-bar").prepend(leftArrow);
+
+    if(entry) {
+      generateSingleEntryView(entry);
+      console.log(entry.pageTitle);
+    }
+  } else if(before == "singleEntry" && after == "allEntries"){
+    // 单条——》全部
+    // 先移除单条视图
+    $(BASE_CONTAINER).children().remove();
+    // 移除返回箭头
+    $("span#back").remove();
+    generateAllEntriesView(BASE_CONTAINER);
   }
 }
 

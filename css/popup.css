@@ -42,7 +42,7 @@ body {
   background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent); /* W3C */
 }
 
-#title {
+#LightMarker {
   font-size: 1.2em;
   position: relative;
   left: 8px;
@@ -53,11 +53,13 @@ body {
   background: none;
   font-size: 1.4em;
   position: relative;
-  bottom: 2px;
-  left: 31px;
+  top: 1px;
   cursor: pointer;
   color: white;
+}
 
+#tool-bar span#bookmark, span#settings {
+  left: 31px;
 }
 
 
@@ -100,6 +102,8 @@ span.page-title {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  position: relative;
+  top: 3px;
 }
 
 i.icon {
@@ -127,4 +131,59 @@ span.confirm {
 .prompt .badge {
   position: relative;
   top: 5px;
+}
+
+/*单行视图*/
+a.details {
+  font-family: 微软雅黑;
+  padding: 0px;
+  cursor: default;
+}
+
+/*a.details:hover {
+  background:white;
+}*/
+
+a.details span.data-name {
+  display: inline-block;
+  margin: 5px;
+  width: 40px;
+  text-align: center;
+}
+
+a.details span.separator {
+  display: inline-block;
+  width: 1px;
+  height: 36px;
+  background: rgb(182, 182, 182);
+  margin-top: -10px;
+  margin-bottom: -15px;
+}
+
+a.details span.data-content {
+  display: inline-block;
+  padding: 5px;
+  width: 270px;
+}
+
+a.details#buttons {
+  padding: 10px;
+}
+
+a.details#buttons div {
+  display: inline-block;
+}
+
+a.details#buttons div:first-of-type {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+a.details#buttons div:last-of-type {
+  margin-right: 20px;
+  margin-left: 20px;
+}
+
+a.details#buttons button {
+  width: 124px;
 }
