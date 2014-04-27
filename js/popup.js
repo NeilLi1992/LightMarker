@@ -51,13 +51,13 @@ helper.wrapEntry = function(entry){
 
   // level-1
   node.append(
-    $("<span class='badge details level-1 hide'></span>").append(
+    $("<span class='badge details level-1 hide' title='详情'></span>").append(
       "<i class='icon icon-list-alt'></i>"));
   // node.append(
   //   $("<span class='badge edit level-1 hide'></span>").append(
   //     "<i class='icon icon-pencil'></i>"));
   node.append(
-    $("<span class='badge delete level-1 hide'></span>").append(
+    $("<span class='badge delete level-1 hide' title='删除'></span>").append(
       "<i class='icon icon-trash'></i>"));
 
   //level 2
@@ -132,6 +132,32 @@ helper.appendEntry = function(container, entry) {
   // 使用$("#tool-bar").after()可以调整顺序
   $(container).prepend(helper.wrapEntry(entry));
   helper.activateEntry(entry);
+}
+// 在单条视图中测试每一个数据项的文字溢出
+helper.testTextOverflow = function(dataNode, rollSpeed) {
+  var dataDiv = dataNode.children("div.data-content");
+  var dataSpan = dataDiv.children("span");
+
+  // 判断文字溢出，并且滚动文字
+  if(dataSpan.width() > dataDiv.width()) {
+    dataNode.append($("<i class='icon-caret-right text-roll'></i>")
+                      .mouseenter(function(){
+                        $(this).css("font-size", "25px").css("top", "2px");
+                        var marginLeftValue = 0;
+                        roll = function(){
+                          marginLeftValue -= 1;
+                          dataSpan.css("margin-left", marginLeftValue + "px");
+                          if(dataSpan.width() + marginLeftValue < dataDiv.width()) {
+                            window.clearInterval(loop);
+                          }
+                        }
+                        loop = window.setInterval(roll, rollSpeed);
+                      }).mouseleave(function(){
+                        $(this).css("font-size", "").css("top", "");
+                        window.clearInterval(loop);
+                        dataSpan.css("margin-left", "");
+                      }));
+  }
 }
 
 /*
@@ -254,49 +280,89 @@ function generateAllEntriesView(container, entries) {
 }
 
 /*
-  生成视图2：单个标签详情视图
+  生成视图2：单个书签详情视图
 */
 function generateSingleEntryView(entry) {
   // 标题节点
   var titleNode = $("<a href='#' class='list-group-item details' id='title'></a>");
   titleNode.append($("<span class='data-name'>标题</span>"));
   titleNode.append($("<span class='separator'></span>"));
-  titleNode.append($("<span class='data-content'></span>").text(entry.pageTitle));
+  titleNode.append($("<div class='data-content'></div>").append($("<span title='" + entry.pageTitle + "'></span>").text(entry.pageTitle)));
   $(BASE_CONTAINER).append(titleNode);
+  helper.testTextOverflow(titleNode, 15); //测试标题节点是否溢出
+
   // 地址节点
   var urlNode = $("<a href='#' class='list-group-item details' id='url'></a>");
   urlNode.append($("<span class='data-name'>地址</span>"));
   urlNode.append($("<span class='separator'></span>"));
-  urlNode.append($("<span class='data-content'></span>").text(entry.url));
+  urlNode.append($("<div class='data-content'></div>").append($("<span title='" + entry.url + "'></span>").text(entry.url)));
   $(BASE_CONTAINER).append(urlNode);
+  helper.testTextOverflow(urlNode, 10); //测试地址节点是否溢出
 
   // 时间节点
   var dateObj = new Date(entry.timeStamp);
   var timeNode = $("<a href='#' class='list-group-item details' id='time'></a>");
   timeNode.append($("<span class='data-name'>时间</span>"));
   timeNode.append($("<span class='separator'></span>"));
-  timeNode.append($("<span class='data-content'></span>").text(dateObj.toLocaleString()));
+  timeNode.append($("<div class='data-content'></div>").append($("<span></span>").text(dateObj.toLocaleString())));
   $(BASE_CONTAINER).append(timeNode);
 
   // // 滑动条位置节点
   // var scrollPosNode = $("<a href='#' class='list-group-item details' id='scrollPos'></a>");
   // scrollPosNode.append($("<span class='data-name'>滚动条位置</span>"));
   // scrollPosNode.append($("<span class='separator'></span>"));
-  // scrollPosNode.append($("<span class='data-content'></span>").text(entry.scrollPos));
+  // scrollPosNode.append($("<div class='data-content'></div>").append($("<span></span>").text(entry.scrollPos)));
   // $(BASE_CONTAINER).append(scrollPosNode);
 
   // 列表节点
   var listNode = $("<a href='#' class='list-group-item details' id='list'></a>");
   listNode.append($("<span class='data-name'>列表</span>"));
   listNode.append($("<span class='separator'></span>"));
-  listNode.append($("<span class='data-content'></span>").text("暂不可用"));
+  listNode.append($("<div class='data-content'></div>").append($("<span></span>").text("暂不可用")));
   $(BASE_CONTAINER).append(listNode);
 
   // 按钮节点
   var buttonsNode = $("<a href='#' class='list-group-item details' id='buttons'></a>");
-  buttonsNode.append($("<div><button type='button' class='btn btn-primary'><i class='icon-pencil'></i>&nbsp修&nbsp&nbsp改</button></div>"));
-  buttonsNode.append($("<div><button type='button' class='btn btn-danger'><i class='icon-trash'></i>&nbsp删&nbsp&nbsp除</button></div>"));
+  buttonsNode.append($("<div><button type='button' class='btn btn-primary' id='edit'><i class='icon-pencil'></i>&nbsp修&nbsp&nbsp改</button></div>"));
+  buttonsNode.append($("<div><button type='button' class='btn btn-primary' id='delete'><i class='icon-trash'></i>&nbsp删&nbsp&nbsp除</button></div>"));
   $(BASE_CONTAINER).append(buttonsNode);
+
+  // 按钮逻辑
+  var clickOnDelete = function() {
+    $(this).removeClass("btn-primary").addClass("btn-danger").text(" 确  认").prepend("<i class='icon-ok'></i>");
+    $(this).mouseleave(function(){
+      $(this).removeClass("btn-danger");
+      $(this).addClass("btn-primary");
+      $(this).text(" 删 除");
+      $(this).prepend("<i class='icon-trash'></i>");
+      $(this).unbind("click");
+      $(this).click(clickOnDelete);
+      $(this).unbind("mouseleave");
+    });
+    $(this).unbind("click");
+    $(this).click(clickOnConfirm);
+  }
+
+  var clickOnConfirm = function() {
+    console.log("即将删除！");
+    $(this).unbind("click");
+    $(this).unbind("mouseleave");
+    // 执行删除该条目，
+    background.deleteEntry(entry.timeStamp, function(){
+      $("button#delete").removeClass("btn-danger").addClass("btn-success");
+      console.log("删除成功！");
+      background.getNumberOfEntries(function(count){
+        // 如果已经没有条目剩下
+        if(count == 0) {
+          setTimeout(function(){changeView("singleEntry", "empty");}, 1000);
+        } else {
+          setTimeout(function(){changeView("singleEntry", "allEntries");}, 1000);
+        }
+      });
+    });
+  }
+
+  $("button#delete").click(clickOnDelete);
 }
 
 // TODO
@@ -341,27 +407,44 @@ function changeView(before, after, entry) {
     $(BASE_CONTAINER).children().remove();
     // 为工具条最左侧增加返回按钮
     // 构造jq对象
-    var leftArrow = $("<span class='badge' id='back' title='返回'><i class='icon-arrow-left'></i></span>")
+    var leftArrow = $("<span class='badge animated' id='back' title='返回'><i class='icon-arrow-left'></i></span>")
                 .css("position", "fixed")
                 .css("left", "6px")
                 .css("top", "3px")
+                .mouseenter(function(){
+                  $(this).addClass("tada");
+                })
+                .mouseleave(function(){
+                  $(this).removeClass("tada");
+                })
                 .click(function(){
                   // 点击时切换回全部条目视图
                   changeView("singleEntry", "allEntries");
-                });
+                })
+                .fadeIn("slow");
     $("#tool-bar").prepend(leftArrow);
 
     if(entry) {
       generateSingleEntryView(entry);
-      console.log(entry.pageTitle);
     }
   } else if(before == "singleEntry" && after == "allEntries"){
     // 单条——》全部
     // 先移除单条视图
     $(BASE_CONTAINER).children().remove();
     // 移除返回箭头
-    $("span#back").remove();
+    $("span#back").fadeOut("slow", function(){
+      $(this).remove();
+    });
     generateAllEntriesView(BASE_CONTAINER);
+  } else if(before == "singleEntry" && after == "empty") {
+    // 单条——》空白
+    // 先移除单条视图
+    $(BASE_CONTAINER).children().remove();
+    // 移除返回箭头
+    $("span#back").fadeOut("slow", function(){
+      $(this).remove();
+    });
+    generateEmptyView(BASE_CONTAINER);
   }
 }
 

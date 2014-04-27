@@ -45,7 +45,7 @@ body {
 #LightMarker {
   font-size: 1.2em;
   position: relative;
-  left: 8px;
+  left: 24px;
   letter-spacing: 0.8em;
 }
 
@@ -60,6 +60,10 @@ body {
 
 #tool-bar span#bookmark, span#settings {
   left: 31px;
+}
+
+#back:hover {
+  color: Turquoise;
 }
 
 
@@ -146,24 +150,41 @@ a.details {
 
 a.details span.data-name {
   display: inline-block;
+  letter-spacing: 0.5em;
+  font-weight: bold;
+  font-size: 1.2em;
   margin: 5px;
-  width: 40px;
+  width: 51px;
   text-align: center;
+  height: 25px;
+  line-height: 25px;
+  margin-right: -2px;
 }
 
 a.details span.separator {
   display: inline-block;
   width: 1px;
-  height: 36px;
+  height: 38px;
   background: rgb(182, 182, 182);
   margin-top: -10px;
   margin-bottom: -15px;
 }
 
-a.details span.data-content {
+a.details div.data-content {
   display: inline-block;
-  padding: 5px;
+  padding: 5px 5px 5px 0px;
+  margin-left: 5px;
   width: 270px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: absolute;
+}
+
+a.details i.text-roll {
+  position: relative;
+  left: 275px;
+  font-size: 20px;
 }
 
 a.details#buttons {

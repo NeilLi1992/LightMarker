@@ -166,8 +166,27 @@ Model.getAllFromStore = function(osName, callback) {
 /*
   向指定的os更新一个数据
 */
-Model.putToStore = function() {
+Model.putToStore = function(obj, osName, callback) {
+ if(Model.db != null) {
+    // 创建事务对象，指定os与读写模式
+    // 事务提交成功后，从事务对象获取要操作的os对象
+    var t = Model.db.transaction([osName], "readwrite");
+    t.oncomplete = function() {
+      console.log("更新数据成功！");
+      if(callback && typeof callback === "function") {
+        callback();
+      }
+    }
 
+    var store = t.objectStore(osName);
+    var request = store.put(obj);
+
+    // request.onerror = function(e) { console.log("添加数据失败 ", e.target.error.name);}
+    // request.onsuccess = function(e) {}
+
+    // TODO transaction方法可以有三个事件来定义回调函数：onabort, oncomplete, onerror
+
+  } else {  console.log("更新数据失败，IDB尚未打开，Model.db对象为null。");  }
 }
 
 /*

@@ -194,8 +194,8 @@ function getEntry(options, callback) {
 /*
   更新条目
 */
-function updateEntry() {
-
+function updateEntry(entry, callback) {
+  Model.putToStore(entry, "Entries", callback);
 }
 
 /*

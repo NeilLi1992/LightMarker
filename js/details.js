@@ -24,6 +24,10 @@ jQuery(function($) {
 });
 
 // 为首页的图片增加动画
+$("#home-icon-img").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+  $(this).removeClass("tada");
+});
+
 $("#home-icon-img").mouseenter(function(){
   $(this).removeClass("tada");
   $(this).addClass("shake");
@@ -78,6 +82,11 @@ $(window).scroll(function(){
     // 当动画结束时，去除类
     $("#footer-icon img").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
       $(this).removeClass("animated bounce");
+    });
+  } else if(window.scrollY == 0) {
+    $("#home-icon-img").addClass("tada");
+    $("#home-icon-img").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+      $(this).removeClass("tada");
     });
   }
 });
