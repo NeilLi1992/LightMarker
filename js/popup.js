@@ -190,7 +190,7 @@ function init() {
 
       // 点击齿轮按钮，打开设置页面，关闭popup
       $("#settings").click(function(){
-        chrome.tabs.create({url:"index.html#settings"}, function(){
+        chrome.tabs.create({url:"http://neilli1992.github.io/LightMarker/#settings"}, function(){
           window.close();
         });
       }).children("i").mouseenter(function(){
@@ -252,7 +252,7 @@ function generateEmptyView(container) {
     // 需要时再载入节点
     $(container).append(howToNode);
     $("#how-to-save").fadeIn(700).children(".badge").click(function(){
-      chrome.tabs.create({url:"index.html"}, function(){
+      chrome.tabs.create({url:"http://neilli1992.github.io/LightMarker/"}, function(){
           window.close();
         });
     });
