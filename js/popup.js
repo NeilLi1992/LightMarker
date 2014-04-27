@@ -190,7 +190,7 @@ function init() {
 
       // 点击齿轮按钮，打开设置页面，关闭popup
       $("#settings").click(function(){
-        chrome.tabs.create({url:"details.html#settings"}, function(){
+        chrome.tabs.create({url:"index.html#settings"}, function(){
           window.close();
         });
       }).children("i").mouseenter(function(){
@@ -252,7 +252,7 @@ function generateEmptyView(container) {
     // 需要时再载入节点
     $(container).append(howToNode);
     $("#how-to-save").fadeIn(700).children(".badge").click(function(){
-      chrome.tabs.create({url:"details.html"}, function(){
+      chrome.tabs.create({url:"index.html"}, function(){
           window.close();
         });
     });
@@ -284,7 +284,7 @@ function generateAllEntriesView(container, entries) {
 */
 function generateSingleEntryView(entry) {
   // 标题节点
-  var titleNode = $("<a href='#' class='list-group-item details' id='title'></a>");
+  var titleNode = $("<a href='#' class='list-group-item details editable' id='title'></a>");
   titleNode.append($("<span class='data-name'>标题</span>"));
   titleNode.append($("<span class='separator'></span>"));
   titleNode.append($("<div class='data-content'></div>").append($("<span title='" + entry.pageTitle + "'></span>").text(entry.pageTitle)));
@@ -292,7 +292,7 @@ function generateSingleEntryView(entry) {
   helper.testTextOverflow(titleNode, 15); //测试标题节点是否溢出
 
   // 地址节点
-  var urlNode = $("<a href='#' class='list-group-item details' id='url'></a>");
+  var urlNode = $("<a href='#' class='list-group-item details uneditable' id='url'></a>");
   urlNode.append($("<span class='data-name'>地址</span>"));
   urlNode.append($("<span class='separator'></span>"));
   urlNode.append($("<div class='data-content'></div>").append($("<span title='" + entry.url + "'></span>").text(entry.url)));
@@ -301,7 +301,7 @@ function generateSingleEntryView(entry) {
 
   // 时间节点
   var dateObj = new Date(entry.timeStamp);
-  var timeNode = $("<a href='#' class='list-group-item details' id='time'></a>");
+  var timeNode = $("<a href='#' class='list-group-item details uneditable' id='time'></a>");
   timeNode.append($("<span class='data-name'>时间</span>"));
   timeNode.append($("<span class='separator'></span>"));
   timeNode.append($("<div class='data-content'></div>").append($("<span></span>").text(dateObj.toLocaleString())));
@@ -315,7 +315,7 @@ function generateSingleEntryView(entry) {
   // $(BASE_CONTAINER).append(scrollPosNode);
 
   // 列表节点
-  var listNode = $("<a href='#' class='list-group-item details' id='list'></a>");
+  var listNode = $("<a href='#' class='list-group-item details uneditable' id='list'></a>");
   listNode.append($("<span class='data-name'>列表</span>"));
   listNode.append($("<span class='separator'></span>"));
   listNode.append($("<div class='data-content'></div>").append($("<span></span>").text("暂不可用")));
@@ -328,6 +328,7 @@ function generateSingleEntryView(entry) {
   $(BASE_CONTAINER).append(buttonsNode);
 
   // 按钮逻辑
+  // 点击删除
   var clickOnDelete = function() {
     $(this).removeClass("btn-primary").addClass("btn-danger").text(" 确  认").prepend("<i class='icon-ok'></i>");
     $(this).mouseleave(function(){
@@ -342,7 +343,7 @@ function generateSingleEntryView(entry) {
     $(this).unbind("click");
     $(this).click(clickOnConfirm);
   }
-
+  // 删除后点击确认
   var clickOnConfirm = function() {
     console.log("即将删除！");
     $(this).unbind("click");
@@ -361,8 +362,86 @@ function generateSingleEntryView(entry) {
       });
     });
   }
-
   $("button#delete").click(clickOnDelete);
+
+  // 点击编辑
+  var clickOnEdit = function() {
+    console.log("Edit!");
+    // $(".editable div.data-content").css("border", "1px solid").css("padding-top", "4px").css("padding-bottom", "4px");
+    $("a.editable i.text-roll").hide();
+    $("a.editable").append("<i class='icon-pencil editing animated fadeInRight'></i>");
+    $("a.editable .data-content span").attr("contenteditable", "true")
+                                      .css("cursor", "pointer")
+                                      .css("display", "inline-block")
+                                      .css("width", "265px")
+                                      .mouseenter(function(){
+                                        $("a.editable i").removeClass("fadeInRight").addClass("swing");
+                                      })
+                                      .mouseleave(function(){
+                                        $("a.editable i").removeClass("swing");
+                                      })
+                                      .blur(function(){
+                                        var text = $(this).text();
+                                        if(text.length == 0) {
+                                          $("button#edit-save").addClass("disabled");
+                                          $(this).parent().siblings("i.editing").addClass("flash")
+                                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                                            $(this).removeClass("flash");
+                                          });
+
+                                        } else {
+                                          $("button#edit-save").removeClass("disabled");
+                                        }
+                                      });
+
+    $("a.uneditable .data-content span").css("cursor", "not-allowed");
+
+    $("a#buttons").children().hide();
+    $("a#buttons").prepend($("<div><button type='button' class='btn btn-success' id='edit-save'><i class='icon-ok'></i>&nbsp保&nbsp&nbsp存</button></div>"));
+    $("a#buttons").append($("<div><button type='button' class='btn btn-danger' id='edit-cancel'><i class='icon-remove'></i>&nbsp取&nbsp&nbsp消</button></div>"));
+    // 点击保存
+    $("button#edit-save").click(function(){
+      console.log("点击保存！");
+      if($("a#title .data-content span").text() !== entry.pageTitle) {
+        // 发生了修改，保存到后台IDB中
+        entry.pageTitle = $("a#title .data-content span").text();
+        background.updateEntry(entry, function(){
+          $("button#edit-cancel").click();
+        });
+      } else {
+        // 没有修改，效果等同于取消
+        $("button#edit-cancel").click();
+      }
+
+
+    });
+
+    // 点击取消
+    $("button#edit-cancel").click(function(){
+      $("a.editable i.text-roll").show();
+      $("a.editable i.editing").addClass("fadeOutRight")
+                                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                                  $(this).remove();
+                                });
+      $("a.editable .data-content span").removeAttr("contenteditable")
+                                        .css("cursor", "")
+                                        .css("display", "")
+                                        .css("width", "")
+                                        .unbind("mouseenter")
+                                        .unbind("mouseleave");
+
+      $("a.uneditable .data-content span").css("cursor", "");
+      // TODO 不能通用
+      // 回复原来的文字
+      if($("a#title .data-content span").text() != entry.pageTitle) {
+        $("a#title .data-content span").text(entry.pageTitle);
+      }
+
+      $("#edit-save, #edit-cancel").parent().remove();
+      $("a#buttons").children().show();
+    });
+  }
+  $("button#edit").click(clickOnEdit);
 }
 
 // TODO
@@ -430,16 +509,18 @@ function changeView(before, after, entry) {
   } else if(before == "singleEntry" && after == "allEntries"){
     // 单条——》全部
     // 先移除单条视图
-    $(BASE_CONTAINER).children().remove();
+    $(BASE_CONTAINER).children().fadeOut(function(){
+      $(this).remove();
+    });
     // 移除返回箭头
-    $("span#back").fadeOut("slow", function(){
+    $("span#back").fadeOut(function(){
       $(this).remove();
     });
     generateAllEntriesView(BASE_CONTAINER);
   } else if(before == "singleEntry" && after == "empty") {
     // 单条——》空白
     // 先移除单条视图
-    $(BASE_CONTAINER).children().remove();
+    $(BASE_CONTAINER).children().fadeOut(function(){$(this).remove();});
     // 移除返回箭头
     $("span#back").fadeOut("slow", function(){
       $(this).remove();
