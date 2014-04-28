@@ -13,9 +13,9 @@ jQuery(function($) {
         0:'home',
         1:'features',
         2: 'how-to',
-        3: 'settings',
-        4: 'update',
-        5: 'contact'
+        // 3: 'settings',
+        3: 'update',
+        4: 'contact'
       },
       itemClass: 'menuItem',
       itemHover: 'active'

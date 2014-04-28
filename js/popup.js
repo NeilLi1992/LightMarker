@@ -190,7 +190,7 @@ function init() {
 
       // 点击齿轮按钮，打开设置页面，关闭popup
       $("#settings").click(function(){
-        chrome.tabs.create({url:"http://neilli1992.github.io/LightMarker/#settings"}, function(){
+        chrome.tabs.create({url:"settings.html"}, function(){
           window.close();
         });
       }).children("i").mouseenter(function(){
