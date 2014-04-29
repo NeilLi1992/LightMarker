@@ -12,9 +12,9 @@
 ##更新记录
 V1.0初始版本 2014年4月<br>
 实现基本的书签存储功能，可以记录滚动条位置，再次打开时可以恢复到记录的位置。<br>
-完成光线书签项目展示[网页DEMO]("http://neilli1992.github.io/LightMarker/")。
+完成光线书签项目展示[网页DEMO](http://neilli1992.github.io/LightMarker/)。
 
 ##联系我
 开发者：李泳 Neil<br>
 邮箱：yong.li1992@foxmail.com<br>
-更多内容请浏览项目展示[网页]("http://neilli1992.github.io/LightMarker/")。
+更多内容请浏览项目展示[网页](http://neilli1992.github.io/LightMarker/)。
