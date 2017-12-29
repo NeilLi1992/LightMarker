@@ -1,6 +1,6 @@
 # 光线书签 LightMarker
 
-**This project hasn't been maintained for a while.**
+**This project is no longer actively maintained. It has been replaced by my recent remake [LightMarker2](https://github.com/NeilLi1992/LightMarker2).**
 
 ## 特色
 * 无需账号注册，安装即用。采用IndexedDB本地存储技术，更加轻便快捷。
